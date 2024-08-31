@@ -7,10 +7,13 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
-defined('ROOT') or exit('No direct script access allowed');
+
+const ACCESS_DENIED = 'Access denied !';
+
+defined('ROOT') or exit('Access denied!');
 
 class core
 {
@@ -39,8 +42,9 @@ class core
 
     public function __construct()
     {
-        if (!is_dir(DATA))
-            mkdir(DATA);
+        if (!is_dir(DATA)) {
+            @mkdir(DATA);
+        }
         $this->createLogger();
 
         // Timezone
@@ -60,7 +64,7 @@ class core
             $this->themes[$v] = util::readJsonFile(THEMES . $v . '/infos.json', true);
         }
         // On détermine le plugin que l'on doit executer suivant le mode (public ou admin)
-        
+
         $parts = explode('/', trim(router::getInstance()->getCleanURI(), '/'));
         if ($parts[0] === 'index.php') {
             array_shift($parts);
@@ -108,7 +112,7 @@ class core
 
     /**
      * Return Core Instance
-     * 
+     *
      * @return \self
      */
     public static function getInstance()
@@ -145,7 +149,7 @@ class core
     /**
      * Set up a config val.
      * This setting will not be saved
-     * 
+     *
      * @param string $key
      * @param string $value
      */
@@ -234,7 +238,7 @@ class core
      * Permet d'appeler un hook
      * Si un paramètre est fourni, celui-ci sera passé de fonction en fonction Hook de filtre).
      * Sinon, la valeur de retour sera concaténé à chaque fonction (Hook d'action).
-     * 
+     *
      * @param   string  Nom du hook
      * @param   mixed   Paramètres
      * @return  mixed
@@ -286,7 +290,7 @@ class core
 
     /**
      * Redirect to an other URL and stop current connection
-     * 
+     *
      * @param string $url
      */
     public function redirect(string $url):void {
@@ -313,7 +317,7 @@ class core
     /**
      * Saves a configuration value to the config file.
      *
-     * @param string|array $val The configuration value to save. 
+     * @param string|array $val The configuration value to save.
      * @param array $append Additional configuration values to append.
      * @return bool True if the save was successful, false otherwise.
      */
@@ -336,34 +340,38 @@ class core
 
     public function install()
     {
-        $install = true;
         @chmod(ROOT . '.htaccess', 0604);
         if (!is_dir(DATA) && (!@mkdir(DATA) || !@chmod(DATA, 0755)))
+            return false;
+
+        $install = true;
+        if (!file_exists(DATA . '.htaccess') && !@file_put_contents(DATA . '.htaccess', 'Require all denied' . PHP_EOL, 0604)) {
             $install = false;
-        if ($install) {
-            if (!file_exists(DATA . '.htaccess')) {
-                if (!@file_put_contents(DATA . '.htaccess', "Require all denied", 0604))
-                    $install = false;
-            }
-            if (!is_dir(DATA_PLUGIN) && (!@mkdir(DATA_PLUGIN) || !@chmod(DATA_PLUGIN, 0755)))
-                $install = false;
-            if (!is_dir(UPLOAD) && (!@mkdir(UPLOAD) || !@chmod(UPLOAD, 0755)))
-                $install = false;
-            if (!file_exists(UPLOAD . '.htaccess')) {
-                if (!@file_put_contents(UPLOAD . '.htaccess', "Require all granted", 0604))
-                    $install = false;
-            }
-            if (!file_exists(__FILE__) || !@chmod(__FILE__, 0644))
-                $install = false;
-            $key = uniqid(true);
-            if (
-                !file_exists(DATA . 'key.php') && !@file_put_contents(DATA
-                    . 'key.php', "<?php\ndefined('ROOT') OR exit"
-                    . "('No direct script access allowed');"
-                    . "\ndefine('KEY', '$key'); ?>", 0604)
-            )
-                $install = false;
         }
+        if (!is_dir(DATA_PLUGIN) && (!@mkdir(DATA_PLUGIN) || !@chmod(DATA_PLUGIN, 0755))) {
+            $install = false;
+        }
+        if (!is_dir(UPLOAD) && (!@mkdir(UPLOAD) || !@chmod(UPLOAD, 0755))) {
+            $install = false;
+        }
+        if (!file_exists(UPLOAD . '.htaccess') && !@file_put_contents(UPLOAD . '.htaccess', 'Require all granted' . PHP_EOL, 0604)) {
+            $install = false;
+        }
+
+        $key = uniqid(true);
+        $filename = DATA . 'key.php';
+        if (!file_exists($filename)) {
+            ob_start();
+            echo '<?php' . PHP_EOL;
+?>
+defined('ROOT') or exit('<?= ACCESS_DENIED ?>');
+const KEY = '<?= $key ?>';
+<?php
+            if(!@file_put_contents($filename, ob_get_clean() . PHP_EOL, 0604)) {
+                $install = false;
+            }
+        }
+
         return $install;
     }
 
@@ -392,7 +400,7 @@ class core
 
     /**
      * Add a log into log file
-     * 
+     *
      * @param string|array Message
      * @param string Severity
      * Can be 'INFO', 'DEBUG', 'WARNING', 'ERROR'
@@ -421,7 +429,7 @@ class core
 /**
  * Add a log into log file
  * @see \core->log()
- * 
+ *
  * @param string|array Message
  * @param string Severity
  * Can be 'INFO', 'DEBUG', 'WARNING', 'ERROR'
@@ -438,7 +446,9 @@ function logg($message, $severity = 'INFO')
  */
 function debug($message):void
 {
-    echo '<pre>';
-    print_r($message);
-    echo '</pre>';
+?>
+<pre>
+<?php print_r($message); ?>
+</pre>
+<?php
 }

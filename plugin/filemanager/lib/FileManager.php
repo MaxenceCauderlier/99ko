@@ -7,7 +7,7 @@
  * 
  * @package 299Ko https://github.com/299Ko/299ko
  */
-defined('ROOT') OR exit('No direct script access allowed');
+defined('ROOT') OR exit('Access denied!');
 
 require_once(PLUGINS . 'filemanager/lib/File.php');
 require_once(PLUGINS . 'filemanager/lib/Folder.php');

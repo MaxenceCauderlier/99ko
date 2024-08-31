@@ -7,7 +7,7 @@
  * 
  * @package 299Ko https://github.com/299Ko/299ko
  */
-defined('ROOT') or exit('No direct script access allowed');
+defined('ROOT') or exit('Access denied!');
 
 class CoreController extends Controller
 {

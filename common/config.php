@@ -7,20 +7,23 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
- 
-define('VERSION', '2.0.0');
-define('COMMON', ROOT . 'common/');
-define('DATA', ROOT . 'data/');
-define('UPLOAD', ROOT . 'data/upload/');
-define('DATA_PLUGIN', ROOT . 'data/plugin/');
-define('THEMES', ROOT . 'theme/');
-define('PLUGINS', ROOT . 'plugin/');
-define('ADMIN_PATH', ROOT . 'admin/');
-define('FONTICON', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
-define('FANCYCSS', "https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/4.0.31/fancybox.min.css");
-define("FANCYJS", "https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/4.0.31/fancybox.umd.min.js");
-if (file_exists(DATA . 'key.php'))
-    include(DATA . 'key.php');
+
+const VERSION = '2.0.0';
+const COMMON = ROOT . 'common/';
+const DATA = ROOT . 'data/';
+const UPLOAD = ROOT . 'data/upload/';
+const DATA_PLUGIN = ROOT . 'data/plugin/';
+const THEMES = ROOT . 'theme/';
+const PLUGINS = ROOT . 'plugin/';
+const ADMIN_PATH = ROOT . 'admin/';
+const FONTICON = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+const FANCYCSS = 'https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/4.0.31/fancybox.min.css';
+const FANCYJS = 'https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/4.0.31/fancybox.umd.min.js';
+
+$filename = DATA . 'key.php';
+if (file_exists($filename)) {
+    include $filename;
+}

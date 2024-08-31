@@ -24,7 +24,7 @@
 					<div class="main_nav" role="navigation" aria-label="{{ Lang.core-nav-admin }}">
 						<ul id="navigation">
 							<li id="nav-change-container">
-								<a role="button" href="#" onclick="changeMainNav()">
+								<a role="button" href="#" onclick="return changeMainNav()">
 									<i title="{{ Lang.admin-change-sidebar-width }}" id="nav-icon-grow"></i>
 								</a>
 							</li>

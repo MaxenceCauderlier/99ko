@@ -5,7 +5,7 @@
 		<label for="email">{{ Lang.users-mail}}</label>
 		<input type="email" id="email" name="email" required />
 		<label for="pwd">{{Lang.password}}</label>
-		<input type="text" id="pwd" name="pwd" required />
+		<input type="password" id="pwd" name="pwd" required />
 		<button>{{Lang.submit}}</button>
 	</form>
 </section>

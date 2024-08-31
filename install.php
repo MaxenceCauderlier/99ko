@@ -6,16 +6,20 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
+
 ini_set('display_errors', 1);
-define('ROOT', './');
-define('BASE_PATH', substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT'])));
-include_once(ROOT . 'common/config.php');
-include_once(ROOT . 'common/common.php');
-if (file_exists(DATA . 'config.json'))
+
+const ROOT = './';
+
+include_once ROOT . 'common/common.php';
+
+if (file_exists(DATA . 'config.json')) {
     die('A config file is already exist');
+}
+
 $core = core::getInstance();
 $pluginsManager = pluginsManager::getInstance();
 $url = core::getInstance()->makeSiteUrl() . '/install.php';
@@ -90,16 +94,16 @@ if (count($_POST) > 0) {
         die();
     }
 }
-?>
 
+?>
 <!doctype html>
-<html lang="fr">
+<html lang="<?= lang::getLocale() ?>">
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>299ko - <?php echo lang::get('install-installation'); ?></title>	
+        <title>299ko - <?= lang::get('install-installation') ?></title>
         <link rel="stylesheet" href="admin/styles.css" media="all">
-        <link rel="stylesheet" href="<?php echo FONTICON; ?>" />
+        <link rel="stylesheet" href="<?= FONTICON ?>" />
     </head>
 
     <body class="login">
@@ -108,89 +112,103 @@ if (count($_POST) > 0) {
         </div>
         <section id="install">
             <header>
-                <h1 class="text-center"><?php echo lang::get('install-installation'); ?></h1>
+                <h1 class="text-center"><?= lang::get('install-installation'); ?></h1>
             </header>
-            <?php
-            if ($errorPHP) {
-                echo '<div class="msg error">';
-                echo lang::get('install-php-version-error', (float) substr(phpversion(), 0, 3), $minPHPVersion);
-                echo '</div>';
-            } else {
-                echo '<div class="msg success">';
-                echo lang::get('install-php-version-ok', $minPHPVersion);
-                echo '</div>';
-            }
+<?php
+	if ($errorPHP) {
+?>
+			<div class="msg error">
+                <?= lang::get('install-php-version-error', (float) substr(phpversion(), 0, 3), $minPHPVersion) ?>
+            </div>
+<?php
+	} else {
+?>
+            <div class="msg success">
+                <?= lang::get('install-php-version-ok', $minPHPVersion) ?>
+            </div>
+<?php
+    }
 
-            if ($errorRewrite === 'CGI') {
-                echo '<div class="msg warning">';
-                echo lang::get('install-php-rewrite-cgi');
-                echo '</div>';
-            } elseif ($errorRewrite) {
-                echo '<div class="msg error">';
-                echo lang::get('install-php-rewrite-error');
-                echo '</div>';
-            } else {
-                echo '<div class="msg success">';
-                echo lang::get('install-php-rewrite-ok');
-                echo '</div>';
-            }
+	if ($errorRewrite === 'CGI') {
+?>
+			<div class="msg warning">
+                <?= lang::get('install-php-rewrite-cgi') ?>
+			</div>
+<?php
+    } elseif ($errorRewrite) {
+?>
+            <div class="msg error">
+                <?= lang::get('install-php-rewrite-error') ?>
+            </div>
+<?php
+    } else {
+?>
+			<div class="msg success">';
+				<?= lang::get('install-php-rewrite-ok') ?>
+            </div>
+<?php
+    }
 
-            if ($errorDataWrite) {
-                echo '<div class="msg error">';
-                echo lang::get('install-php-data-write-error');
-                echo '</div>';
-            } else {
-                echo '<div class="msg success">';
-                echo lang::get('install-php-data-write-ok');
-                echo '</div>';
-            }
-            if ($errorDataWrite || $errorPHP || $errorRewrite === true) {
-                echo lang::get('install-please-check-errors');
-            } else {
-                ?>
-                <form method="post" action="">   
-                    <?php echo '<h3>'.lang::get('install-please-fill-fields').'</h3>';
-                    ?>          
-                    <p><label for="lang-select"><?php echo lang::get('install-lang-choice'); ?></label>
+	if ($errorDataWrite) {
+?>
+			<div class="msg error">
+                <?= lang::get('install-php-data-write-error') ?>
+            </div>
+<?php
+	} else {
+?>
+			<div class="msg success">
+                <?= lang::get('install-php-data-write-ok') ?>
+            </div>
+<?php
+	}
+
+	if ($errorDataWrite || $errorPHP || $errorRewrite === true) {
+		echo lang::get('install-please-check-errors');
+	} else {
+?>
+                <form method="post" action="">
+                    <h3><?= lang::get('install-please-fill-fields') ?></h3>
+                    <p><label for="lang-select"><?= lang::get('install-lang-choice'); ?></label>
                     <select name="lang-select" id="lang-select" onchange="langChange()">
-                        <?php
-                        foreach (lang::$availablesLocales as $k => $v) {
-                            if (lang::getLocale() === $k) {
-                                echo '<option value="' . $k . '" selected>' . $v . '</option>';
-                            } else {
-                                echo '<option value="' . $k . '">' . $v . '</option>';
-                            }
-                        }
-                        ?>
+<?php
+		$locale = lang::getLocale();
+		foreach (lang::$availablesLocales as $k => $v) {
+			$selected = ($locale === $k) ? 'selected' : '';
+?>
+						<option value="<?= $k ?>" <?= $selected ?>><?= $v  ?></option>
+<?php
+		}
+?>
                     </select>
                     </p>
                     <p>
-                        <label for="adminEmail"><?php echo lang::get('email'); ?></label><br>
+                        <label for="adminEmail"><?= lang::get('email'); ?></label><br>
                         <input type="email" name="adminEmail" required="required">
                     </p>
                     <p>
-                        <label for="adminPwd"><?php echo lang::get('password'); ?></label><br>
+                        <label for="adminPwd"><?= lang::get('password'); ?></label><br>
                         <input type="password" name="adminPwd" id="adminPwd" required="required">
                     </p>
                     <p>
-                        <a id="showPassword" href="javascript:showPassword()" class="button success"><?php echo lang::get('install-show-password'); ?></a>
-                        <button type="submit" class="button success"><?php echo lang::get('submit'); ?></button>
+                        <a id="showPassword" href="javascript:showPassword()" class="button success"><?= lang::get('install-show-password'); ?></a>
+                        <button type="submit" class="button success"><?= lang::get('submit'); ?></button>
                     </p>
-                    </form>
-                    <footer><a target="_blank" href="https://github.com/299ko/"><?php echo lang::get('site-just-using', VERSION); ?></a>
-                    </footer>
-                
-                <?php
-            }
-            ?>
+				</form>
+				<footer>
+					<a target="github" href="https://github.com/299ko/"><?= lang::get('site-just-using', VERSION); ?></a>
+				</footer>
+<?php
+	}
+?>
         </section>
         <script type="text/javascript">
             function showPassword() {
-                document.getElementById("adminPwd").setAttribute("type", "text");
-                document.getElementById("showPassword").style.display = 'none';
+                document.getElementById('adminPwd').setAttribute('type', 'text');
+                document.getElementById('showPassword').style.display = 'none';
             }
             function langChange() {
-                window.location.href = '<?php echo $url; ?>?lang=' + document.getElementById("lang-select").value;
+                window.location.href = '<?= $url; ?>?lang=' + document.getElementById("lang-select").value;
             }
         </script>
     </body>

@@ -7,10 +7,10 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
-defined('ROOT') or exit('No direct script access allowed');
+defined('ROOT') or exit('Access denied!');
 
 class util
 {
@@ -38,7 +38,7 @@ class util
     /**
      * Truncate an HTML content and keep only the <p> and <br> tags
      * It save the new lines and dont cut on a word
-     * 
+     *
      * @param  string $str      Content to truncate
      * @param  int    $length   Number of characters to keep
      * @param  string $add      Text to add after the content if truncated
@@ -78,9 +78,7 @@ class util
 
     public static function isEmail($email)
     {
-        if (preg_match("/^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}$/", $email))
-            return true;
-        return false;
+		return (filter_var($email, FILTER_VALIDATE_EMAIL) === false) ? false : true;
     }
 
     ## Envoie un email
@@ -108,7 +106,7 @@ class util
 
     /**
      * List a directory and return an array with files and folders (separated). This function is not recursive
-     * 
+     *
      * @param string $folder Path to scan
      * @param array $not Array of files to exclude
      * @return array $data['dir] : Directories / $data['file'] : Files
@@ -240,7 +238,7 @@ class util
 
     /**
      * Build absolute URL with siteURL saved in config.json
-     * 
+     *
      * @param  string URI
      * @param  bool   is Admin location
      * @return string URL
@@ -261,7 +259,7 @@ class util
 
     /**
      * Return current page URL
-     * 
+     *
      * @return string
      */
     public static function getCurrentURL()
@@ -374,7 +372,7 @@ class util
             }
             $current_level = $level;
         }
-        
+
         if (!isset($level)) {
             // No heading
             return false;

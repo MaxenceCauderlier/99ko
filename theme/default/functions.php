@@ -1,3 +1,3 @@
 <?php
 ## Code php du thème...
-?>
+

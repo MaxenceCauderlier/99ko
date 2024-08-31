@@ -7,12 +7,13 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
-define('ROOT', './');
-define('BASE_PATH', substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT'])));
-include_once(ROOT . 'common/common.php');
+
+const ROOT = './';
+
+include_once ROOT . 'common/common.php';
 
 if (!$core->isInstalled()) {
     header('location:' . ROOT . 'install.php');
@@ -20,6 +21,7 @@ if (!$core->isInstalled()) {
 }
 
 define('IS_LOGGED', UsersManager::isLogged());
+
 // For futures versions
 define('IS_ADMIN', IS_LOGGED);
 

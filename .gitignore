@@ -1,9 +1,20 @@
 /data/
 /.lando.yml
 *.cache.php
-/plugin/lightstats/
-/plugin/mdeditor/
-/plugin/highlight/
-/plugin/download/
-/plugin/home/
+
+# plugins
+!/plugin/antispam/
+!/plugin/blog/
+!/plugin/configmanager/
+!/plugin/contact/
+!/plugin/filemanager/
+!/plugin/galerie/
+/plugin/
+
+# themes
+!/theme/default/
+/theme/
+
+#editor
 .vscode/
+

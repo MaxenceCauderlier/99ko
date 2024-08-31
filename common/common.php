@@ -7,26 +7,26 @@
  * @author Maxence Cauderlier <mx.koder@gmail.com>
  * @author Frédéric Kaplon <frederic.kaplon@me.com>
  * @author Florent Fortat <florent.fortat@maxgun.fr>
- * 
+ *
  * @package 299Ko https://github.com/299Ko/299ko
  */
-session_start();
-defined('ROOT') or exit('No direct script access allowed');
 
-include_once(ROOT . 'common/config.php');
+session_start();
+defined('ROOT') or exit('Access denied!');
+
+define('BASE_PATH', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'));
+
+include_once ROOT . 'common/config.php';
 
 // Autoload class in COMMON directory
 spl_autoload_register(function ($class) {
-	$className = strtolower($class);
-	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(COMMON));
-	foreach ($iterator as $file)
+	$pattern = '#^' . $class . '(?:\.class)?\.php$#i';
+	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(COMMON, FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS));
+	foreach ($iterator as $fileInfo) // $fileInfo is a SplFileInfo object
 	{
-		if ($file->isFile() && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-			$fileName = strtolower($file->getFilename());
-			if ($fileName === $className . '.php' || $fileName === $className . '.class.php') {
-				include_once($file);
-				break;
-			}
+		if (preg_match($pattern , $fileInfo->getFileName())) {
+			include_once $fileInfo; // as $fileInfo->__toString()
+			return;
 		}
 	}
 });
@@ -40,7 +40,7 @@ foreach ($pluginsManager->getPlugins() as $plugin) {
         $plugin->loadLangFile();
         $plugin->loadRoutes();
 		if ($plugin->getLibFile() !== false) {
-			include_once($plugin->getLibFile());
+			include_once $plugin->getLibFile();
 		}
         foreach ($plugin->getHooks() as $name => $function) {
             $core->addHook($name, $function);
